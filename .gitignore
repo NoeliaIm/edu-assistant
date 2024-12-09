@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+.venv*
+env/
+venv/
+ENV/
+.venv_edu_assistant/
+
+# PyCharm
+.idea/
+*.iml
+*.iws
+.idea_modules/
+
+# Logs
+*.log
+
+# Local environment
+.env.local
+.env.*.local
