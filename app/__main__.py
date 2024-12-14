@@ -27,7 +27,7 @@ async def run_langflow_endpoint(input_message: str):
 async def run_langflow_endpoint(input_message: str):
     try:
         result = run_flow_historia(message=input_message, endpoint="aa641b6d-318c-405e-af68-665bd64eee6f")
-        return result
+        return result.get('outputs')[0]['outputs'][0]['outputs']['message']
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
