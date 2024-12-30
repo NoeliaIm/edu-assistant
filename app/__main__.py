@@ -1,8 +1,15 @@
-from http.client import HTTPException
+import os
+import tempfile
 
-from fastapi import FastAPI
-
-from app.services.langflow_api_client import run_flow, run_flow_historia
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from app.services.langflow_api_client import (
+    run_flow,
+    run_flow_historia,
+    TWEAKS,
+    BASE_API_URL,
+    FLOW_ID_HISTORIA,
+    upload_file
+)
 
 app = FastAPI()
 
@@ -24,9 +31,34 @@ async def run_langflow_endpoint(input_message: str):
 
 
 @app.post("/run_langflow_historia")
-async def run_langflow_endpoint(input_message: str):
+async def run_langflow_endpoint(input_message:  str = Form(...), file: UploadFile = File(None)):
     try:
-        result = run_flow_historia(message=input_message, endpoint="aa641b6d-318c-405e-af68-665bd64eee6f")
+        temp_file_path = None
+        tweaks = TWEAKS
+
+        if file:  # Solo procesamos el archivo si se ha proporcionado
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+                temp_file_path = temp_file.name
+                content = await file.read()
+                temp_file.write(content)
+
+            # Definir la ruta final
+            output_dir = "C:/Users/noe/PycharmProjects/venv_assistant/uploads"
+            final_path = os.path.join(output_dir, file.filename)
+
+            # Configurar tweaks con ambas rutas
+            tweaks = {
+                "CustomComponent-2TrrY": {
+                    "path": temp_file_path
+                }
+            }
+
+        result = run_flow_historia(
+            message=input_message,
+            endpoint=FLOW_ID_HISTORIA,
+            tweaks=tweaks
+        )
+
         return result.get('outputs')[0]['outputs'][0]['outputs']['message']
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
