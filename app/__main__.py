@@ -10,6 +10,7 @@ from app.services.langflow_api_client import (
     FLOW_ID_HISTORIA,
     upload_file
 )
+from app.services.langflow_api_upload_file import run_flow_update_file
 
 app = FastAPI()
 
@@ -63,6 +64,42 @@ async def run_langflow_endpoint(input_message:  str = Form(...), file: UploadFil
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
+
+@app.post("/upload")
+async def upload_file(file: UploadFile = File(...)):
+    try:
+        temp_file_path = None
+        tweaks = TWEAKS
+
+        if not file:
+            raise HTTPException(status_code=400, detail="Se requiere un archivo")
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+            temp_file_path = temp_file.name
+            content = await file.read()
+            temp_file.write(content)
+
+            # Definir la ruta final
+            output_dir = "C:/Users/noe/PycharmProjects/venv_assistant/syllabus"
+            final_path = os.path.join(output_dir, file.filename)
+
+            # Configurar tweaks con ambas rutas
+            tweaks = {
+                "CustomComponent-mbbW4": {
+                    "path": temp_file_path
+                }
+            }
+
+            result = run_flow_update_file(
+                message=file.filename,
+                endpoint="c94064f6-876c-49e4-bed4-7da12634708c",
+                tweaks=tweaks
+            )
+
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 # Este bloque es opcional pero recomendado para ejecutar la aplicación
 if __name__ == "__main__":
