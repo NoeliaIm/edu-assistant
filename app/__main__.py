@@ -1,7 +1,11 @@
+import json
 import os
 import tempfile
 
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from pytest_flask.plugin import JSONResponse
+
+from app.services.langflow_api_clasificador import run_flow_clasificacion
 from app.services.langflow_api_client import (
     run_flow,
     run_flow_historia,
@@ -27,6 +31,18 @@ async def run_langflow_endpoint(input_message: str):
     try:
         result = run_flow(message=input_message, endpoint="9fff23d3-2565-4305-8544-b8adb39a1627")
         return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/clasificar_pregunta")
+async def run_langflow_endpoint(input_message: str = Form(...)):
+    try:
+        result = run_flow_clasificacion(message=input_message, endpoint="clasificarPregunta")
+        rawText = result.get('outputs')[0]['outputs'][0]['results']['message']['text']
+        cleaned_text = rawText.strip().replace('\\n', '').replace('\\', '')
+        json_obj = json.loads(cleaned_text)
+        return json_obj
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
