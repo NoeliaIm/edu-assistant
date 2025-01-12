@@ -18,21 +18,21 @@ from app.services.langflow_api_upload_file import run_flow_update_file
 
 app = FastAPI()
 
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
+# @app.get("/")
+# async def root():
+#     return {"message": "Hello World"}
 
-@app.get("/hello/{name}")
-async def say_hello(name: str):
-    return {"message": f"Hello {name}"}
+# @app.get("/hello/{name}")
+# async def say_hello(name: str):
+#     return {"message": f"Hello {name}"}
 
-@app.post("/run_langflow")
-async def run_langflow_endpoint(input_message: str):
-    try:
-        result = run_flow(message=input_message, endpoint="9fff23d3-2565-4305-8544-b8adb39a1627")
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# @app.post("/run_langflow")
+# async def run_langflow_endpoint(input_message: str):
+#     try:
+#         result = run_flow(message=input_message, endpoint="9fff23d3-2565-4305-8544-b8adb39a1627")
+#         return result
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.post("/clasificar_pregunta")
