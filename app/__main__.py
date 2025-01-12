@@ -8,7 +8,7 @@ from pytest_flask.plugin import JSONResponse
 from app.services.langflow_api_clasificador import run_flow_clasificacion
 from app.services.langflow_api_client import (
     run_flow,
-    run_flow_historia,
+    run_flow_chat,
     TWEAKS,
     BASE_API_URL,
     FLOW_ID_HISTORIA,
@@ -47,7 +47,7 @@ async def run_langflow_endpoint(input_message: str = Form(...)):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/run_langflow_historia")
+@app.post("/run_langflow_chat")
 async def run_langflow_endpoint(input_message:  str = Form(...), file: UploadFile = File(None)):
     try:
         temp_file_path = None
@@ -70,7 +70,7 @@ async def run_langflow_endpoint(input_message:  str = Form(...), file: UploadFil
                 }
             }
 
-        result = run_flow_historia(
+        result = run_flow_chat(
             message=input_message,
             endpoint=FLOW_ID_HISTORIA,
             tweaks=tweaks

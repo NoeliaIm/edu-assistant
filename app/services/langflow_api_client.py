@@ -57,7 +57,7 @@ def run_flow(message: str,
     response = requests.post(api_url, json=payload, headers=headers)
     return response.json()
 
-def run_flow_historia(message: str,
+def run_flow_chat(message: str,
   endpoint: str,
   output_type: str = "chat",
   input_type: str = "chat",
@@ -113,7 +113,7 @@ Run it like: python <your file>.py "your message here" --endpoint "your_endpoint
             raise ValueError("You need to provide the components to upload the file to.")
         tweaks = upload_file(file_path=args.upload_file, host=BASE_API_URL, flow_id=args.endpoint, components=[args.components], tweaks=tweaks)
 
-    response = run_flow_historia(
+    response = run_flow_chat(
         message=args.message,
         endpoint=args.endpoint,
         output_type=args.output_type,
